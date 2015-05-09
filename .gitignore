@@ -3,7 +3,6 @@ gradle/
 .gradle/
 gradlew.bat
 gradlew
-build.gradle
 README.txt
 MinecraftForge-License.txt
 MinecraftForge-Credits.txt
