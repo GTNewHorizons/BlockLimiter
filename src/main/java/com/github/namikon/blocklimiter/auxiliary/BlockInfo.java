@@ -3,10 +3,13 @@ package com.github.namikon.blocklimiter.auxiliary;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.namikon.blocklimiter.BlockLimiter;
+
 import net.minecraft.block.Block;
 import net.minecraftforge.event.world.BlockEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import eu.usrv.yamcore.auxiliary.IntHelper;
 
 public class BlockInfo {
 	private String _mFQBN;
@@ -28,7 +31,7 @@ public class BlockInfo {
 		
 		if (pUID.modId == _mModID && pUID.name == _mBlockName)
 		{
-			LogHelper.debug("Target Block found, ModID and Name match");
+			BlockLimiter.Logger.debug("Target Block found, ModID and Name match");
 			if(_mBannedDimensions.contains(pDimensionID))
 				return tResult;
 		}
@@ -38,7 +41,7 @@ public class BlockInfo {
 	
 	private void InitBlockInfoInstance(String pBlockConfig)
 	{
-		LogHelper.debug("pBlockConfig: " + pBlockConfig);
+		BlockLimiter.Logger.debug("pBlockConfig: " + pBlockConfig);
 		
 		String[] tBlockInfoArray1 = pBlockConfig.split(";");
 		_mFQBN = tBlockInfoArray1[0];
@@ -47,7 +50,7 @@ public class BlockInfo {
 		
 		if(tBlockInfoArray2.length < 2)
 		{
-			LogHelper.warn("BlockDefinition " + pBlockConfig + " is invalid and will be ignored");
+			BlockLimiter.Logger.warn("BlockDefinition " + pBlockConfig + " is invalid and will be ignored");
 			throw new IllegalArgumentException(pBlockConfig);
 		}
 		
@@ -57,13 +60,13 @@ public class BlockInfo {
 		Block tTestBlock = GameRegistry.findBlock(_mModID, _mBlockName);
 		if (tTestBlock == null)
 		{
-			LogHelper.warn("The Block " + _mFQBN + " can't be found in the Gameregistry and will be ignored");
+			BlockLimiter.Logger.warn("The Block " + _mFQBN + " can't be found in the Gameregistry and will be ignored");
 			throw new IllegalArgumentException(pBlockConfig);
 		}
 		
 		if (tBlockInfoArray1.length == 1)
 		{
-			LogHelper.debug("New restrictive Block added: " + tTestBlock.getUnlocalizedName() + " Block is denied in ALL dimensions");
+			BlockLimiter.Logger.debug("New restrictive Block added: " + tTestBlock.getUnlocalizedName() + " Block is denied in ALL dimensions");
 			_mGlobalDenied = true;
 		}
 		else
@@ -74,7 +77,7 @@ public class BlockInfo {
 					AddBlacklistedDim(Integer.parseInt(tBlockInfoArray1[i]));
 			}
 			
-			LogHelper.debug("New restrictive Block added: " + tTestBlock.getUnlocalizedName() + " Block is denied in " + _mBannedDimensions.size() + " dimension(s)");
+			BlockLimiter.Logger.debug("New restrictive Block added: " + tTestBlock.getUnlocalizedName() + " Block is denied in " + _mBannedDimensions.size() + " dimension(s)");
 		}
 	}
 	
