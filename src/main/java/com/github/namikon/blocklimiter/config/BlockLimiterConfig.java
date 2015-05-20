@@ -19,7 +19,9 @@ public class BlockLimiterConfig extends ConfigManager {
 
 	public List<BlockInfo> LimitedBlocks = null;
 	private String tConfiguredBlocks[];
-	
+	public String[] RandomDenyMessages = null;
+	public String SFXOnBlockDeny;
+	public boolean DenyCreativeMode;
 	
 	 /**
 	 * PreInit default values and lists
@@ -27,16 +29,23 @@ public class BlockLimiterConfig extends ConfigManager {
 	 @Override
 	protected void PreInit()
 	{
-		LimitedBlocks = new ArrayList<BlockInfo>(); 
+		LimitedBlocks = new ArrayList<BlockInfo>();
+		RandomDenyMessages = new String[] {"You can't place that here", "You are too jelly to place this", "The block doesn't want to be here", "YOU SHALL NOT PLACE (this Block)", "*poof*"};
+		SFXOnBlockDeny = "minecraft:ambient.weather.thunder";
+		DenyCreativeMode = false;
 	}
 	
 	protected void Init()
 	{
-		tConfiguredBlocks = _mainConfig.getStringList("BlockList", "Main", new String[] {}, "Define your Blocks here. Syntax is: [modID]:[BlockID];[DimID];[DimID];[DimID];...");
+		tConfiguredBlocks = _mainConfig.getStringList("BlockList", "Main", new String[] {}, "Define your Blocks here. Syntax is: [modID]:[BlockID];[DimID];... if you don't add a Dimension (e.g. minecraft:dirt) it will be denied in every dimension");
+		RandomDenyMessages = _mainConfig.getStringList("RejectMessages", "Main", RandomDenyMessages, "Define a few reject messages that are being sent to the player if they try to place a monitored Block");
+		SFXOnBlockDeny = _mainConfig.getString("PlaySFXOnBlockDeny", "main", SFXOnBlockDeny, "Leave it blank for no sound effect, or put in a valid sound-reference like this: [modID]:[soundeffectID]");
+		DenyCreativeMode = _mainConfig.getBoolean("DenyCreativeMode", "main", DenyCreativeMode, "Set this to true to prevent even Server-OPs/Admins from placing forbidden blocks");
 	}
 	
 	public boolean Reload()
 	{
+		_mainConfig.load(); // Reload file
 		Init();
 		return InitDefinedBlocks();
 	}

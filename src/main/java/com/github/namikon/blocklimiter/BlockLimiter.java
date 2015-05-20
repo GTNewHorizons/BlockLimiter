@@ -15,7 +15,7 @@ import net.minecraftforge.common.config.Configuration;
 import com.github.namikon.blocklimiter.auxiliary.*;
 import com.github.namikon.blocklimiter.command.BlockLimiterCommand;
 import com.github.namikon.blocklimiter.config.BlockLimiterConfig;
-import com.github.namikon.events.BlockPlaceEvent;
+import com.github.namikon.blocklimiter.events.BlockPlaceEvent;
 
 import eu.usrv.yamcore.auxiliary.LogHelper;
 import eu.usrv.yamcore.config.ConfigManager;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.namikon.blocklimiter.BlockLimiter;
+import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -20,7 +21,7 @@ public class BlockLimiterCommand implements ICommand {
 	public BlockLimiterCommand()
 	{
 		this.aliases = new ArrayList();
-		this.aliases.add("blimitreload");
+		this.aliases.add("blimit");
 	}
 	
 	@Override
@@ -31,12 +32,12 @@ public class BlockLimiterCommand implements ICommand {
 
 	@Override
 	public String getCommandName() {
-		return "blimitreload";
+		return "blimit";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender p_71518_1_) {
-		return "/blimitreload";
+		return "/blimit reload|info";
 	}
 
 	@Override
@@ -48,10 +49,45 @@ public class BlockLimiterCommand implements ICommand {
 	@Override
 	public void processCommand(ICommandSender pCmdSender, String[] pArgs)
 	{
-		if (!BlockLimiter.Config.Reload())
-			PlayerChatHelper.SendError(pCmdSender, "Blocks could not be reloaded properly. Please check the console output and fix the config file");
+		if (pArgs.length < 1)
+		{
+			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|info");
+			return;
+		}
+		
+		if (pArgs[0].equalsIgnoreCase("reload"))
+		{
+			if (!isOpOrAdmin(pCmdSender))
+			{
+				PlayerChatHelper.SendError(pCmdSender, "You need to be op or admin to reload the config");
+				return;
+			}
+			else
+			{
+				if (!BlockLimiter.Config.Reload())
+					PlayerChatHelper.SendError(pCmdSender, "Blocks could not be reloaded properly. Please check the console output and fix the config file");
+				else
+					PlayerChatHelper.SendInfo(pCmdSender, String.format("Blocklimiter config reloaded. Now monitoring %d Block(s)", BlockLimiter.Config.LimitedBlocks.size()));
+			}
+		}
+		else if(pArgs[0].equalsIgnoreCase("info"))
+		{
+			if (BlockLimiter.Config.LimitedBlocks.size() == 0)
+			{
+				PlayerChatHelper.SendInfo(pCmdSender, String.format("There are currently no forbidden Blocks"));
+			}
+			else
+			{
+				PlayerChatHelper.SendInfo(pCmdSender, String.format("The following Blocks are monitored by BlockLimiter:"));
+				for (BlockInfo bi : BlockLimiter.Config.LimitedBlocks)
+				{
+					PlayerChatHelper.SendInfo(pCmdSender, bi.getInfoString());
+				}
+			}
+		}
 		else
-			PlayerChatHelper.SendInfo(pCmdSender, String.format("Blocklimiter config reloaded. Now monitoring %d Blocks", BlockLimiter.Config.LimitedBlocks.size()-1));
+			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|info");
+
 	}
 
 	private void ProcessDenyinDims(EntityPlayer tEp, ItemStack inHand,
@@ -59,44 +95,33 @@ public class BlockLimiterCommand implements ICommand {
 				
 	}
 
-	private void ProcessAllowinAllDims(EntityPlayer tEp, ItemStack inHand) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void ProcessDenyinAllDims(EntityPlayer tEp, ItemStack inHand) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void ProcessAllowinDims(EntityPlayer tEp, ItemStack inHand,
-			String[] pArgs) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void SendHelpToPlayer(ICommandSender pCmdSender)
-	{
-		PlayerChatHelper.SendInfo(pCmdSender, "  /hazarditems addpotion <potionID> <tickDuration> <level>");
-	}
-	
 	/* 
-	 * Make sure only an op/admin can execute this command
+	 * Everyone shall execute this command to see a list of blocked Blocks
 	 */
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender pCommandSender)
 	{
-		  if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer())
-			  return true;
-		  
-		  if(pCommandSender instanceof EntityPlayerMP)
-		  {
-			  EntityPlayerMP tEP = (EntityPlayerMP)pCommandSender;
-			  return MinecraftServer.getServer().getConfigurationManager().func_152596_g(tEP.getGameProfile());
-		  }
-		  return false;
+		return true;
 	}
 
+	/**
+	 * Check if commandSender is an op or admin
+	 * @param pCommandSender
+	 * @return
+	 */
+	private boolean isOpOrAdmin(ICommandSender pCommandSender)
+	{
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer())
+			return true;
+
+		if(pCommandSender instanceof EntityPlayerMP)
+		{
+			EntityPlayerMP tEP = (EntityPlayerMP)pCommandSender;
+			return MinecraftServer.getServer().getConfigurationManager().func_152596_g(tEP.getGameProfile());
+		}
+		return false;
+	}
+	
 	@Override
 	public List addTabCompletionOptions(ICommandSender p_71516_1_,
 			String[] p_71516_2_) {

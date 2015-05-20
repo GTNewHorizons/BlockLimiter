@@ -28,15 +28,40 @@ public class BlockInfo {
 	public boolean isDenied(UniqueIdentifier pUID, int pDimensionID) 
 	{
 		boolean tResult = false;
+		BlockLimiter.Logger.debug(String.format("Checking against block %s:%s", _mModID, _mBlockName));
 		
-		if (pUID.modId == _mModID && pUID.name == _mBlockName)
+		if (pUID.modId.equalsIgnoreCase(_mModID) && pUID.name.equalsIgnoreCase(_mBlockName))
 		{
 			BlockLimiter.Logger.debug("Target Block found, ModID and Name match");
-			if(_mBannedDimensions.contains(pDimensionID))
-				return tResult;
+			if(_mBannedDimensions.contains(pDimensionID) || _mGlobalDenied)
+				tResult = true;
 		}
 
+		BlockLimiter.Logger.debug("Result is " + tResult);
 		return tResult;
+	}
+	
+	public String getInfoString()
+	{
+		String tInfo = String.format("Block %s:%s ", _mModID, _mBlockName);
+		if (_mGlobalDenied)
+			 tInfo += "[ALL]";
+		else
+		{
+			tInfo += "[In DIM: ";
+		
+			boolean tFirst = true;
+			for (Integer i : _mBannedDimensions)
+			{
+				if (tFirst)
+					tFirst = false;
+				else
+					tInfo += ", ";
+				tInfo += String.format("%d", i); 
+			}
+			tInfo += "]";
+		}
+		return tInfo;
 	}
 	
 	private void InitBlockInfoInstance(String pBlockConfig)
