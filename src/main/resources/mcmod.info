@@ -3,7 +3,7 @@
   "modid": "blocklimiter",
   "name": "BlockLimiter. Restict your Blocks",
   "description": "Define which Blocks can be placed or not, depending on the dimension",
-  "version": "0.1 Alpha",
+  "version": "0.3 Alpha",
   "mcversion": "1.7.10",
   "url": "",
   "updateUrl": "",
