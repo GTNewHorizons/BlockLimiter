@@ -17,13 +17,16 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.3"
+version = "1.7.10-0.3"
 group= "com.github.namikon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "BlockLimiter"
 
 minecraft {
     version = "1.7.10-10.13.2.1291"
     runDir = "eclipse"
+	
+	replaceIn "src/main/java/com/github/namikon/blocklimiter/auxiliary/Reference.java"
+	replace "GRADLETOKEN_VERSION", project.version.split('-')[1]
 }
 
 dependencies {
@@ -44,8 +47,9 @@ dependencies {
 
 processResources
 {
+	def cleanVersion = project.version.split('-')[1]
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
+    inputs.property "version", cleanVersion
     inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
@@ -53,7 +57,7 @@ processResources
         include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version':cleanVersion, 'mcversion':project.minecraft.version
     }
         
     // copy everything else, thats not the mcmod.info
