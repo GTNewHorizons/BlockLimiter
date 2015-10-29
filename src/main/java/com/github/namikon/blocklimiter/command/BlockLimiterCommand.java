@@ -3,18 +3,19 @@ package com.github.namikon.blocklimiter.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.namikon.blocklimiter.BlockLimiter;
-import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+
+import com.github.namikon.blocklimiter.BlockLimiter;
+import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
 
 public class BlockLimiterCommand implements ICommand {
 	private List aliases;
@@ -23,7 +24,7 @@ public class BlockLimiterCommand implements ICommand {
 		this.aliases = new ArrayList();
 		this.aliases.add("blimit");
 	}
-	
+
 	@Override
 	public int compareTo(Object arg0) {
 		// TODO Auto-generated method stub
@@ -54,7 +55,7 @@ public class BlockLimiterCommand implements ICommand {
 			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|info");
 			return;
 		}
-		
+
 		if (pArgs[0].equalsIgnoreCase("reload"))
 		{
 			if (!isOpOrAdmin(pCmdSender))
@@ -92,7 +93,7 @@ public class BlockLimiterCommand implements ICommand {
 
 	private void ProcessDenyinDims(EntityPlayer tEp, ItemStack inHand,
 			String[] pArgs) {
-				
+
 	}
 
 	/* 
@@ -121,7 +122,7 @@ public class BlockLimiterCommand implements ICommand {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public List addTabCompletionOptions(ICommandSender p_71516_1_,
 			String[] p_71516_2_) {

@@ -7,7 +7,6 @@ import java.util.List;
 import com.github.namikon.blocklimiter.BlockLimiter;
 import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
 
-import eu.usrv.yamcore.auxiliary.LogHelper;
 import eu.usrv.yamcore.config.ConfigManager;
 
 public class BlockLimiterConfig extends ConfigManager {
@@ -22,11 +21,11 @@ public class BlockLimiterConfig extends ConfigManager {
 	public String[] RandomDenyMessages = null;
 	public String SFXOnBlockDeny;
 	public boolean DenyCreativeMode;
-	
-	 /**
+
+	/**
 	 * PreInit default values and lists
 	 */
-	 @Override
+	@Override
 	protected void PreInit()
 	{
 		LimitedBlocks = new ArrayList<BlockInfo>();
@@ -34,7 +33,7 @@ public class BlockLimiterConfig extends ConfigManager {
 		SFXOnBlockDeny = "minecraft:ambient.weather.thunder";
 		DenyCreativeMode = false;
 	}
-	
+
 	protected void Init()
 	{
 		tConfiguredBlocks = _mainConfig.getStringList("BlockList", "Main", new String[] {}, "Define your Blocks here. Syntax is: [modID]:[BlockID];[DimID];... if you don't add a Dimension (e.g. minecraft:dirt) it will be denied in every dimension");
@@ -42,15 +41,15 @@ public class BlockLimiterConfig extends ConfigManager {
 		SFXOnBlockDeny = _mainConfig.getString("PlaySFXOnBlockDeny", "main", SFXOnBlockDeny, "Leave it blank for no sound effect, or put in a valid sound-reference like this: [modID]:[soundeffectID]");
 		DenyCreativeMode = _mainConfig.getBoolean("DenyCreativeMode", "main", DenyCreativeMode, "Set this to true to prevent even Server-OPs/Admins from placing forbidden blocks");
 	}
-	
+
 	public boolean Reload()
 	{
 		_mainConfig.load(); // Reload file
 		Init();
 		return InitDefinedBlocks();
 	}
-	
-	
+
+
 	/**
 	 * Init blockDefs
 	 * @param pBlocks
@@ -76,7 +75,7 @@ public class BlockLimiterConfig extends ConfigManager {
 					continue;
 				}
 			}
-			
+
 			LimitedBlocks = tNewLimitedBlocks;
 		}
 		catch (Exception e)
