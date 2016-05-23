@@ -6,6 +6,7 @@ import com.github.namikon.blocklimiter.auxiliary.Reference;
 import com.github.namikon.blocklimiter.command.BlockLimiterCommand;
 import com.github.namikon.blocklimiter.config.BlockLimiterConfig;
 import com.github.namikon.blocklimiter.events.BlockPlaceEvent;
+import com.github.namikon.blocklimiter.events.ItemUseEvent;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -17,7 +18,7 @@ import eu.usrv.yamcore.auxiliary.LogHelper;
 
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, 
 dependencies = 	"required-after:Forge@[10.13.2.1291,);" +
-		"required-after:YAMCore@[0.3,);")
+		"required-after:YAMCore@[0.5.63,);")
 public class BlockLimiter {
 	public static BlockLimiterConfig Config = null;
 	public static LogHelper Logger = new LogHelper("BlockLimiter");
@@ -48,7 +49,9 @@ public class BlockLimiter {
 		if (Config.LoadConfig())
 		{
 			BlockPlaceEvent tPlaceEvent = new BlockPlaceEvent(Config);
+			ItemUseEvent tUseItemEvent = new ItemUseEvent(Config);
 			MinecraftForge.EVENT_BUS.register(tPlaceEvent);
+			MinecraftForge.EVENT_BUS.register(tUseItemEvent);
 		}
 		else
 			Logger.warn(Reference.MODID + " will NOT do anything as there where errors in the postInit event. Check the logfile!");
