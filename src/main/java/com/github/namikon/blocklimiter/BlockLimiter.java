@@ -18,7 +18,7 @@ import eu.usrv.yamcore.auxiliary.LogHelper;
 
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, 
 dependencies = 	"required-after:Forge@[10.13.2.1291,);" +
-		"required-after:YAMCore@[0.5.63,);")
+		"required-after:YAMCore@[0.5.64,);")
 public class BlockLimiter {
 	public static BlockLimiterConfig Config = null;
 	public static LogHelper Logger = new LogHelper("BlockLimiter");

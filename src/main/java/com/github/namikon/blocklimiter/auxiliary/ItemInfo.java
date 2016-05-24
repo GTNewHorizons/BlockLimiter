@@ -7,6 +7,7 @@ import com.github.namikon.blocklimiter.BlockLimiter;
 
 import eu.usrv.yamcore.auxiliary.IntHelper;
 import eu.usrv.yamcore.auxiliary.ItemDescriptor;
+import eu.usrv.yamcore.auxiliary.enums.ItemEqualsCompareMethodEnum;
 
 public class ItemInfo {
 	private ItemDescriptor _mItemDescriptor;
@@ -25,7 +26,7 @@ public class ItemInfo {
 		boolean tResult = false;
 		BlockLimiter.Logger.debug(String.format("Checking against item %s", _mItemDescriptor.toString()));
 
-		if (_mItemDescriptor.equals(pID))
+		if (_mItemDescriptor.isEqualTo(pID, ItemEqualsCompareMethodEnum.Exact))
 		{
 			BlockLimiter.Logger.debug("Target Item found");
 			if(_mBannedDimensions.contains(pDimensionID) || _mGlobalDenied)
@@ -61,7 +62,7 @@ public class ItemInfo {
 
 	private void InitBlockInfoInstance(String pItemConfig)
 	{
-		BlockLimiter.Logger.info("pItemConfig: " + pItemConfig);
+		BlockLimiter.Logger.debug("pItemConfig: " + pItemConfig);
 
 		String[] tBlockInfoArray1 = pItemConfig.split(";");
 		_mItemDescriptor = ItemDescriptor.fromString(tBlockInfoArray1[0]);

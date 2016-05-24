@@ -33,13 +33,14 @@ public class ItemUseEvent {
 			return;
 		
 		// Ignore players in Creative-Mode
-		if (pEvent.entityPlayer.capabilities.isCreativeMode && !BlockLimiter.Config.DenyCreativeMode)
+		if (pEvent.entityPlayer.capabilities.isCreativeMode && BlockLimiter.Config.DenyCreativeMode)
 			return;
 		
 		if(pEvent.entityPlayer != null && pEvent.entityPlayer.getCurrentEquippedItem() != null)
 		{
 			ItemDescriptor tID = ItemDescriptor.fromStack(pEvent.entityPlayer.getCurrentEquippedItem());
-
+			BlockLimiter.Logger.debug(String.format("Usage of item: %s", tID.toString()));
+			
 			for (ItemInfo tII : _mConfig.LimitedItems)
 			{
 				if (tII.isDenied(tID, pEvent.entityPlayer.dimension))
@@ -58,7 +59,6 @@ public class ItemUseEvent {
 					{
 						BlockLimiter.Logger.error("Prevented ServerCrash caused by malformed RejectMessage or SoundSetting in the config file");
 					}			
-
 				}
 			}
 		}
