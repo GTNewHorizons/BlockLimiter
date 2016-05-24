@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 
 import com.github.namikon.blocklimiter.BlockLimiter;
 import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
+import com.github.namikon.blocklimiter.auxiliary.ItemInfo;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -27,7 +28,6 @@ public class BlockLimiterCommand implements ICommand {
 
 	@Override
 	public int compareTo(Object arg0) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -38,7 +38,7 @@ public class BlockLimiterCommand implements ICommand {
 
 	@Override
 	public String getCommandUsage(ICommandSender p_71518_1_) {
-		return "/blimit reload|info";
+		return "/blimit reload|blockinfo|iteminfo";
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class BlockLimiterCommand implements ICommand {
 	{
 		if (pArgs.length < 1)
 		{
-			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|info");
+			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|blockinfo|iteminfo");
 			return;
 		}
 
@@ -68,10 +68,15 @@ public class BlockLimiterCommand implements ICommand {
 				if (!BlockLimiter.Config.Reload())
 					PlayerChatHelper.SendError(pCmdSender, "Blocks could not be reloaded properly. Please check the console output and fix the config file");
 				else
-					PlayerChatHelper.SendInfo(pCmdSender, String.format("Blocklimiter config reloaded. Now monitoring %d Block(s)", BlockLimiter.Config.LimitedBlocks.size()));
+				{
+					PlayerChatHelper.SendInfo(pCmdSender, "Blocklimiter config reloaded. Now monitoring:");
+					PlayerChatHelper.SendInfo(pCmdSender, String.format(" - %d Block(s)", BlockLimiter.Config.LimitedBlocks.size()));
+					PlayerChatHelper.SendInfo(pCmdSender, String.format(" - %d Item(s)", BlockLimiter.Config.LimitedItems.size()));
+				}
+
 			}
 		}
-		else if(pArgs[0].equalsIgnoreCase("info"))
+		else if(pArgs[0].equalsIgnoreCase("blockinfo"))
 		{
 			if (BlockLimiter.Config.LimitedBlocks.size() == 0)
 			{
@@ -86,8 +91,24 @@ public class BlockLimiterCommand implements ICommand {
 				}
 			}
 		}
+		else if(pArgs[0].equalsIgnoreCase("iteminfo"))
+		{
+			if (BlockLimiter.Config.LimitedItems.size() == 0)
+			{
+				PlayerChatHelper.SendInfo(pCmdSender, String.format("There are currently no forbidden Items"));
+			}
+			else
+			{
+				PlayerChatHelper.SendInfo(pCmdSender, String.format("The following Items are monitored by BlockLimiter:"));
+				for (ItemInfo bi : BlockLimiter.Config.LimitedItems)
+				{
+					PlayerChatHelper.SendInfo(pCmdSender, bi.getInfoString());
+				}
+			}
+		}
+
 		else
-			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|info");
+			PlayerChatHelper.SendError(pCmdSender, "Usage: /blimit reload|blockinfo|iteminfo");
 
 	}
 
