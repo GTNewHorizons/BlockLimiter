@@ -65,7 +65,7 @@ public class ItemInfo {
 		BlockLimiter.Logger.debug("pItemConfig: " + pItemConfig);
 
 		String[] tBlockInfoArray1 = pItemConfig.split(";");
-		_mItemDescriptor = ItemDescriptor.fromString(tBlockInfoArray1[0]);
+		_mItemDescriptor = ItemDescriptor.fromString(tBlockInfoArray1[0], true);
 
 		if (_mItemDescriptor == null)
 		{
