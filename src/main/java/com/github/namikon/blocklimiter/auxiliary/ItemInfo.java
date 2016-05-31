@@ -21,6 +21,11 @@ public class ItemInfo {
 		InitBlockInfoInstance(pItemConfig);
 	}
 
+	public ItemDescriptor getDescriptor()
+	{
+		return _mItemDescriptor;
+	}
+	
 	public boolean isDenied(ItemDescriptor pID, int pDimensionID) 
 	{
 		boolean tResult = false;

@@ -8,6 +8,7 @@ import com.github.namikon.blocklimiter.BlockLimiter;
 import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
 import com.github.namikon.blocklimiter.auxiliary.ItemInfo;
 
+import eu.usrv.yamcore.auxiliary.enums.ItemEqualsCompareMethodEnum;
 import eu.usrv.yamcore.config.ConfigManager;
 
 public class BlockLimiterConfig extends ConfigManager {
@@ -102,6 +103,95 @@ public class BlockLimiterConfig extends ConfigManager {
 		return tResult;
 	}
 	
+	/**
+	 * Adds a new limited Item to the list of limited items.
+	 * 
+	 * @param pItemConfig The new limited item. If the item already exists, the dimensions are updated
+	 * @return true if the pItemConfig could be parsed, false if not.
+	 */
+	public boolean IMC_AddLimitedItem(String pItemConfig)
+	{
+		boolean tResult = true;
+		List<ItemInfo> tNewLimitedItems = new ArrayList<ItemInfo>();
+		
+		try
+		{
+			// Try to parse received config-line. Will raise an exception if the syntax is wrong
+			ItemInfo tII = new ItemInfo(pItemConfig);
+
+			boolean tItemAdded = false;
+			// Check if we already know this particular item
+			for (ItemInfo iiIter : LimitedItems)
+			{
+				// If the found item equals the new one, use the new one instead; "Replacing" the existing one
+				if (iiIter.getDescriptor().isEqualTo(tII.getDescriptor(), ItemEqualsCompareMethodEnum.Exact))
+				{
+					tItemAdded = true;
+					tNewLimitedItems.add(tII);
+				}
+				else // if it doesn't equal, just skip
+					tNewLimitedItems.add(iiIter);
+			}
+			
+			// Our loop finished. Check if we replaced any existing entries for this item. if not, add it as new one
+			if (!tItemAdded)
+				tNewLimitedItems.add(tII);
+		}
+		catch (Exception e)
+		{
+			tResult = false;
+		}
+		
+		if (tResult)
+			LimitedItems = tNewLimitedItems;
+		
+		return tResult;
+	}
+	
+	/**
+	 * Adds a new limited Block to the list of limited blocks.
+	 * 
+	 * @param pBlockConfig The new limited item. If the item already exists, the dimensions are updated
+	 * @return true if pBlockConfig could be parsed, false if not.
+	 */
+	public boolean IMC_AddLimitedBlock(String pBlockConfig)
+	{
+		boolean tResult = true;
+		List<BlockInfo> tNewLimitedBlocks = new ArrayList<BlockInfo>();
+		
+		try
+		{
+			// Try to parse received config-line. Will raise an exception if the syntax is wrong
+			BlockInfo tBI = new BlockInfo(pBlockConfig);
+
+			boolean tBlockAdded = false;
+			// Check if we already know this particular item
+			for (BlockInfo iiIter : LimitedBlocks)
+			{
+				// If the found block equals the new one, use the new one instead; "Replacing" the existing one
+				if (iiIter.getDescriptor().equals(tBI.getDescriptor()))
+				{
+					tBlockAdded = true;
+					tNewLimitedBlocks.add(tBI);
+				}
+				else // if it doesn't equal, just skip
+					tNewLimitedBlocks.add(iiIter);
+			}
+			
+			// Our loop finished. Check if we replaced any existing entries for this block. if not, add it as new one
+			if (!tBlockAdded)
+				tNewLimitedBlocks.add(tBI);
+		}
+		catch (Exception e)
+		{
+			tResult = false;
+		}
+		
+		if (tResult)
+			LimitedBlocks = tNewLimitedBlocks;
+		
+		return tResult;
+	}
 	
 	/**
 	 * Init blockDefs
