@@ -11,6 +11,7 @@ import com.github.namikon.blocklimiter.events.ItemUseEvent;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -38,6 +39,28 @@ public class BlockLimiter {
 		}
 	}
 
+    @EventHandler
+    public void imcCallback(FMLInterModComms.IMCEvent event)
+    {
+        for (final FMLInterModComms.IMCMessage imcMessage : event.getMessages())
+        {
+            if (imcMessage.key.equalsIgnoreCase("disallow-item"))
+            {
+                if (imcMessage.isStringMessage())
+                {
+                    Logger.info("Received DISALLOW_ITEM IMC from [" + imcMessage.getSender() + "]: " + imcMessage.getStringValue());
+                }
+            }
+            if (imcMessage.key.equalsIgnoreCase("disallow-block"))
+            {
+                if (imcMessage.isStringMessage())
+                {
+                	Logger.info("Received DISALLOW_BLOCK IMC from [" + imcMessage.getSender() + "]: " + imcMessage.getStringValue());
+                }
+            }
+        }
+    }
+	
 	@EventHandler
 	public void Init(FMLInitializationEvent event)
 	{
