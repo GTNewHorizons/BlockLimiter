@@ -25,6 +25,11 @@ public class BlockInfo {
 		InitBlockInfoInstance(pBlockConfig);
 	}
 
+	public String getDescriptor()
+	{
+		return _mFQBN;
+	}
+	
 	public boolean isDenied(UniqueIdentifier pUID, int pDimensionID) 
 	{
 		boolean tResult = false;

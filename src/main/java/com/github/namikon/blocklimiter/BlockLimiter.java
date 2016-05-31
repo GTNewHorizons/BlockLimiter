@@ -49,6 +49,8 @@ public class BlockLimiter {
                 if (imcMessage.isStringMessage())
                 {
                     Logger.info("Received DISALLOW_ITEM IMC from [" + imcMessage.getSender() + "]: " + imcMessage.getStringValue());
+                    if (!Config.IMC_AddLimitedItem(imcMessage.getStringValue()))
+                    	Logger.warn("Unable to add Item [" + imcMessage.getStringValue() + "] as limited item. Ignoring IMC");
                 }
             }
             if (imcMessage.key.equalsIgnoreCase("disallow-block"))
@@ -56,6 +58,8 @@ public class BlockLimiter {
                 if (imcMessage.isStringMessage())
                 {
                 	Logger.info("Received DISALLOW_BLOCK IMC from [" + imcMessage.getSender() + "]: " + imcMessage.getStringValue());
+                	if (!Config.IMC_AddLimitedBlock(imcMessage.getStringValue()))
+                		Logger.warn("Unable to add Block [" + imcMessage.getStringValue() + "] as limited block. Ignoring IMC");
                 }
             }
         }
