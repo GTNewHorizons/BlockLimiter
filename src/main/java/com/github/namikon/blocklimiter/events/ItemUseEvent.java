@@ -39,6 +39,10 @@ public class ItemUseEvent {
 		if(pEvent.entityPlayer != null && pEvent.entityPlayer.getCurrentEquippedItem() != null)
 		{
 			ItemDescriptor tID = ItemDescriptor.fromStack(pEvent.entityPlayer.getCurrentEquippedItem());
+			// Duct-Tape pam's food. TODO: Find a proper fix for this
+			if (tID == null)
+				return;
+				
 			BlockLimiter.Logger.debug(String.format("Usage of item: %s", tID.toString()));
 			
 			for (ItemInfo tII : _mConfig.LimitedItems)
