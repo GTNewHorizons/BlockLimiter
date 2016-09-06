@@ -17,37 +17,38 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.7.10-0.51"
-group= "com.github.namikon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+file "build.properties" withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
+version = "${config.blocklimiter.version}"
+group= "com.github.namikon"
 archivesBaseName = "BlockLimiter"
 
 minecraft {
-    version = "1.7.10-10.13.2.1291"
+    version = "${config.forge.version}"
     runDir = "eclipse"
-	
-	replaceIn "src/main/java/com/github/namikon/blocklimiter/auxiliary/Reference.java"
-	replace "GRADLETOKEN_VERSION", project.version.split('-')[1]
+
+        replaceIn "src/main/java/com/github/namikon/blocklimiter/auxiliary/Reference.java"
+    replace "GRADLETOKEN_VERSION", project.version.split('-')[1]
+}
+
+repositories {
+    maven {
+        name 'UsrvDE'
+        url "http://jenkins.usrv.de:8082/nexus/content/repositories/releases/"
+    }
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    compile "eu.usrv:YAMCore:${config.minecraft.version}-${config.yamcore.version}:deobf"
 }
 
 processResources
 {
-	def cleanVersion = project.version.split('-')[1]
+    def cleanVersion = project.version.split('-')[1]
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", cleanVersion
     inputs.property "mcversion", project.minecraft.version
