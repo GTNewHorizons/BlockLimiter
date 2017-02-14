@@ -40,6 +40,10 @@ repositories {
         name 'UsrvDE'
         url "http://jenkins.usrv.de:8082/nexus/content/repositories/releases/"
     }
+    maven {
+        name 'UsrvDESnapShots'
+        url "http://jenkins.usrv.de:8082/nexus/content/repositories/snapshots/"
+    }
 }
 
 dependencies {

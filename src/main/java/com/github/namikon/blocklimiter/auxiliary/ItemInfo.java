@@ -1,4 +1,6 @@
+
 package com.github.namikon.blocklimiter.auxiliary;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,98 +11,101 @@ import eu.usrv.yamcore.auxiliary.IntHelper;
 import eu.usrv.yamcore.auxiliary.ItemDescriptor;
 import eu.usrv.yamcore.auxiliary.enums.ItemEqualsCompareMethodEnum;
 
-public class ItemInfo {
-	private ItemDescriptor _mItemDescriptor;
 
-	private List<Integer> _mBannedDimensions;
-	private boolean _mGlobalDenied = false;
+public class ItemInfo
+{
+  private ItemDescriptor _mItemDescriptor;
 
-	public ItemInfo(String pItemConfig)
-	{
-		_mBannedDimensions = new ArrayList<Integer>();
-		InitBlockInfoInstance(pItemConfig);
-	}
+  private List<Integer> _mBannedDimensions;
+  private boolean _mGlobalDenied = false;
 
-	public boolean isDenied(ItemDescriptor pID, int pDimensionID) 
-	{
-		boolean tResult = false;
-		BlockLimiter.Logger.debug(String.format("Checking against item %s", _mItemDescriptor.toString()));
+  public ItemInfo( String pItemConfig )
+  {
+    _mBannedDimensions = new ArrayList<Integer>();
+    InitBlockInfoInstance( pItemConfig );
+  }
 
-		if (_mItemDescriptor.isEqualTo(pID, ItemEqualsCompareMethodEnum.Exact))
-		{
-			BlockLimiter.Logger.debug("Target Item found");
-			if(_mBannedDimensions.contains(pDimensionID) || _mGlobalDenied)
-				tResult = true;
-		}
+  public boolean isDenied( ItemDescriptor pID, int pDimensionID )
+  {
+    boolean tResult = false;
+    BlockLimiter.Logger.debug( String.format( "Checking against item %s", _mItemDescriptor.toString() ) );
 
-		BlockLimiter.Logger.debug("Result is " + tResult);
-		return tResult;
-	}
+    if( _mItemDescriptor.isEqualTo( pID, ItemEqualsCompareMethodEnum.Exact ) )
+    {
+      BlockLimiter.Logger.debug( "Target Item found" );
+      if( _mBannedDimensions.contains( pDimensionID ) || _mGlobalDenied )
+        tResult = true;
+    }
 
-	public String getInfoString()
-	{
-		String tInfo = String.format("Item %s ", _mItemDescriptor.toString());
-		if (_mGlobalDenied)
-			tInfo += "[ALL]";
-		else
-		{
-			tInfo += "[In DIM: ";
+    BlockLimiter.Logger.debug( "Result is " + tResult );
+    return tResult;
+  }
 
-			boolean tFirst = true;
-			for (Integer i : _mBannedDimensions)
-			{
-				if (tFirst)
-					tFirst = false;
-				else
-					tInfo += ", ";
-				tInfo += String.format("%d", i); 
-			}
-			tInfo += "]";
-		}
-		return tInfo;
-	}
+  public String getInfoString()
+  {
+    String tInfo = String.format( "Item %s ", _mItemDescriptor.toString() );
+    if( _mGlobalDenied )
+      tInfo += "[ALL]";
+    else
+    {
+      tInfo += "[In DIM: ";
 
-	private void InitBlockInfoInstance(String pItemConfig)
-	{
-		BlockLimiter.Logger.debug("pItemConfig: " + pItemConfig);
+      boolean tFirst = true;
+      for( Integer i : _mBannedDimensions )
+      {
+        if( tFirst )
+          tFirst = false;
+        else
+          tInfo += ", ";
+        tInfo += String.format( "%d", i );
+      }
+      tInfo += "]";
+    }
+    return tInfo;
+  }
 
-		String[] tBlockInfoArray1 = pItemConfig.split(";");
-		_mItemDescriptor = ItemDescriptor.fromString(tBlockInfoArray1[0], true);
+  private void InitBlockInfoInstance( String pItemConfig )
+  {
+    BlockLimiter.Logger.debug( "pItemConfig: " + pItemConfig );
 
-		if (_mItemDescriptor == null)
-		{
-			BlockLimiter.Logger.warn("ItemDefinition " + pItemConfig + " is invalid and will be ignored");
-			throw new IllegalArgumentException(pItemConfig);
-		}
+    String[] tBlockInfoArray1 = pItemConfig.split( ";" );
+    _mItemDescriptor = ItemDescriptor.fromString( tBlockInfoArray1[0], true );
 
-		if (tBlockInfoArray1.length == 1)
-		{
-			BlockLimiter.Logger.info("New restrictive Item added: " + _mItemDescriptor.toString() + " Item is denied in ALL dimensions");
-			_mGlobalDenied = true;
-		}
-		else
-		{
-			for (int i = 1; i < tBlockInfoArray1.length; i++)
-			{
-				if (IntHelper.tryParse(tBlockInfoArray1[i]))
-					AddBlacklistedDim(Integer.parseInt(tBlockInfoArray1[i]));
-			}
+    if( _mItemDescriptor == null )
+    {
+      BlockLimiter.Logger.warn( "ItemDefinition " + pItemConfig + " is invalid and will be ignored" );
+      throw new IllegalArgumentException( pItemConfig );
+    }
 
-			BlockLimiter.Logger.info("New restrictive Item added: " + _mItemDescriptor.toString() + " Item is denied in " + _mBannedDimensions.size() + " dimension(s)");
-		}
-	}
+    if( tBlockInfoArray1.length == 1 )
+    {
+      BlockLimiter.Logger.info( "New restrictive Item added: " + _mItemDescriptor.toString() + " Item is denied in ALL dimensions" );
+      _mGlobalDenied = true;
+    }
+    else
+    {
+      for( int i = 1; i < tBlockInfoArray1.length; i++ )
+      {
+        if( IntHelper.tryParse( tBlockInfoArray1[i] ) )
+          AddBlacklistedDim( Integer.parseInt( tBlockInfoArray1[i] ) );
+      }
 
-	/**
-	 * Adds a new dimID to the list of blacklisted dim 
-	 * @param pDimID
-	 */
-	private void AddBlacklistedDim(int pDimID)
-	{
-		for (Integer i : _mBannedDimensions)
-		{
-			if (i == pDimID)
-				return;
-		}
-		_mBannedDimensions.add(pDimID);
-	}
+      BlockLimiter.Logger.info( "New restrictive Item added: " + _mItemDescriptor.toString() + " Item is denied in " + _mBannedDimensions.size() + " dimension(s)" );
+    }
+  }
+
+  /**
+   * Adds a new dimID to the list of blacklisted dim
+   * 
+   * @param pDimID
+   */
+  private void AddBlacklistedDim( int pDimID )
+  {
+    for( Integer i : _mBannedDimensions )
+    {
+      if( i == pDimID )
+        return;
+    }
+    _mBannedDimensions.add( pDimID );
+  }
 }
