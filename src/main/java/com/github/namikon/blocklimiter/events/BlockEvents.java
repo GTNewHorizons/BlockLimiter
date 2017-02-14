@@ -43,21 +43,20 @@ public class BlockEvents
     {
       if( tBI.matches( tBlockDomain ) )
       {
-        if (BlockLimiter.instance.BWatcher.canBreakBlock( event.getPlayer().getUniqueID(), event.getPlayer().dimension, event.x, event.y, event.z ))
+        if( BlockLimiter.instance.BWatcher.canBreakBlock( event.getPlayer().getUniqueID(), event.getPlayer().dimension, event.x, event.y, event.z ) )
         {
-          BlockLimiter.instance.BWatcher.removeBlock(event.getPlayer().dimension, event.x, event.y, event.z);
+          BlockLimiter.instance.BWatcher.removeBlock( event.getPlayer().dimension, event.x, event.y, event.z );
         }
         else
         {
-          if (!(event.getPlayer() instanceof FakePlayer))
+          if( !( event.getPlayer() instanceof FakePlayer ) )
             PlayerChatHelper.SendError( event.getPlayer(), "This Block is protected and cannot be removed by you" );
           event.setCanceled( true );
         }
       }
     }
   }
-  
-  
+
   @SubscribeEvent( priority = EventPriority.LOWEST, receiveCanceled = false )
   public void onBlockPlace( BlockEvent.PlaceEvent event )
   {
@@ -78,7 +77,8 @@ public class BlockEvents
         {
           event.setCanceled( true );
 
-          try // just in case someone messes up with the config file...
+          try
+          // just in case someone messes up with the config file...
           {
             if( BlockLimiter.Config.SFXOnBlockDeny.length() > 0 )
               event.world.playSoundAtEntity( event.player, BlockLimiter.Config.SFXOnBlockDeny, 1F, 1F );
@@ -91,13 +91,14 @@ public class BlockEvents
             BlockLimiter.Logger.error( "Prevented ServerCrash caused by malformed RejectMessage or SoundSetting in the config file" );
           }
         }
-        else if (tMaxForDim > 0)
+        else if( tMaxForDim > 0 )
         {
-          int tPlacedCount = BlockLimiter.instance.BWatcher.getPlacedBlockCount( event.player.getUniqueID(), event.blockSnapshot );
+          int tPlacedCount = BlockLimiter.instance.BWatcher.getPlacedBlockCount( event.player.getUniqueID(), event.player.dimension, tBlockDomain, event.blockMetadata );
           if( tPlacedCount == 0 )
           {
+            BlockLimiter.Logger.info( String.format( "Block placed: %s", tBlockDomain.toString() ) );
             PlayerChatHelper.SendNotifyNormal( event.player, "This Block is limited." );
-            PlayerChatHelper.SendNotifyNormal( event.player, "You can place %d more of it in this Dimension", tMaxForDim );
+            PlayerChatHelper.SendNotifyNormal( event.player, "You can place %d more of it in this Dimension", tMaxForDim - 1 );
           }
 
           if( tPlacedCount >= tMaxForDim )
@@ -108,11 +109,11 @@ public class BlockEvents
           // Warn if only 10 blocks of this type remain
           else if( ( tMaxForDim - 10 ) <= tPlacedCount )
           {
-            PlayerChatHelper.SendNotifyWarning( event.player, "You can place %d more of this", ( tMaxForDim - tPlacedCount ) );
+            PlayerChatHelper.SendNotifyWarning( event.player, "You can place %d more of this", ( tMaxForDim - tPlacedCount - 1 ) );
           }
-          
-          if (!event.isCanceled())
-            BlockLimiter.instance.BWatcher.addPlacedBlock( event.player.getUniqueID(), event.blockSnapshot );
+
+          if( !event.isCanceled() )
+            BlockLimiter.instance.BWatcher.addPlacedBlock( event.player.getUniqueID(), tBlockDomain, event.blockMetadata, event.player.dimension, event.x, event.y, event.z );
         }
       }
     }

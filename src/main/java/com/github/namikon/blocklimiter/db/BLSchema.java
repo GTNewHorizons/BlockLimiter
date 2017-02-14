@@ -23,5 +23,6 @@ public class BLSchema extends Schema
         "`z` INT(11) NOT NULL, " + 
         "`dim` INT(11) NOT NULL, " + 
         "PRIMARY KEY (`ID`) );"));
+    updates.add(new DBUpdate("02.14.2017.3", "Placed timestamp", "ALTER TABLE `blocklimitertest`.`blocks` ADD COLUMN `placed` INT(11) NOT NULL AFTER `dim`;"));
   }
 }

@@ -21,9 +21,17 @@ public class BlockWatcher
     _mBlockDimensions = new ArrayList<DimensionWrapper>();
   }
 
-  public void addPlacedBlock( UUID pPlayer, BlockSnapshot pBlock )
+  public void addPlacedBlock( UUID pPlayer, UniqueIdentifier pBlockID, int pBlockMeta, int pDimensionID, int pX, int pY, int pZ )
   {
-    getOrCreateDimensionWrapper( pBlock.dimId ).getBlockList().add( new BlockInfoWithOwner( pPlayer, pBlock ) );
+    synchronized( _mBlockDimensions )
+    {
+      BlockInfoWithOwner tBiwo = new BlockInfoWithOwner( pPlayer );
+      tBiwo.setBlockID( pBlockID, pBlockMeta );
+      tBiwo.setLocation( pX, pY, pZ );
+
+      getOrCreateDimensionWrapper( pDimensionID ).getBlockList().add( tBiwo );
+      BlockLimiter.instance.BWatcherDB.saveBlock( pDimensionID, tBiwo );
+    }
   }
 
   public boolean canBreakBlock( UUID pPlayer, int pDimensionID, int pX, int pY, int pZ )
@@ -85,11 +93,11 @@ public class BlockWatcher
     return dw;
   }
 
-  public void AddExistingBlock(int pDimensionID, BlockInfoWithOwner pBlock)
+  public void AddExistingBlock( int pDimensionID, BlockInfoWithOwner pBlock )
   {
     getOrCreateDimensionWrapper( pDimensionID ).getBlockList().add( pBlock );
   }
-  
+
   public int getPlacedBlockCount( UUID uniqueID, BlockSnapshot blockSnapshot )
   {
     return getPlacedBlockCount( uniqueID, blockSnapshot.dimId, blockSnapshot.blockIdentifier, blockSnapshot.meta );
@@ -113,7 +121,11 @@ public class BlockWatcher
       }
       if( tRemoveIDX > -1 )
       {
-        dw.getBlockList().remove( tRemoveIDX );
+        synchronized( _mBlockDimensions )
+        {
+          BlockLimiter.instance.BWatcherDB.deleteBlock( dw.getBlockList().get( tRemoveIDX ).getDBID() );
+          dw.getBlockList().remove( tRemoveIDX );
+        }
         BlockLimiter.Logger.debug( String.format( "Block at %d-%d-%d dim %d removed from tracking list", pX, pY, pZ, pDimensionID ) );
       }
     }

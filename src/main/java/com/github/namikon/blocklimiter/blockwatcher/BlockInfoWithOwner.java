@@ -19,28 +19,30 @@ public class BlockInfoWithOwner
   private UUID _mOwner;
   private long _mPlaced;
 
-  public BlockInfoWithOwner( UUID pPlayer, BlockSnapshot pBlock )
+  private BlockInfoWithOwner()
   {
     _mDBID = -1;
-    _mBlockID = pBlock.blockIdentifier;
-    _mBlockMeta = pBlock.meta;
+    _mBlockID = null;
+    _mBlockMeta = -1;
+    _mOwner = null;
+    _mLocationX = -1;
+    _mLocationY = -1;
+    _mLocationZ = -1;
+    _mPlaced = -1;
+  }
+  
+  public BlockInfoWithOwner( UUID pPlayer )
+  {
+    this();
     _mOwner = pPlayer;
-    _mLocationX = pBlock.x;
-    _mLocationY = pBlock.y;
-    _mLocationZ = pBlock.z;
     _mPlaced = System.currentTimeMillis() / 1000L;
   }
 
   public BlockInfoWithOwner( int pDatabaseID, UUID pPlayer )
   {
+    this();
     _mDBID = pDatabaseID;
-    _mBlockID = null;
-    _mBlockMeta = -1;
     _mOwner = pPlayer;
-    _mLocationX = -1;
-    _mLocationY = -1;
-    _mLocationZ = -1;
-    _mPlaced = -1;
   }
 
   public void setDBID( int pDBID )
