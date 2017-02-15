@@ -10,6 +10,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import com.github.namikon.blocklimiter.BlockLimiter;
 import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
 import com.github.namikon.blocklimiter.config.BlockLimiterConfig;
+import com.github.namikon.blocklimiter.xmlconfig.BlockLimits.BlockLimit;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -39,11 +40,12 @@ public class BlockEvents
     // Instead of looping the database and its millions of records,
     // we loop the configured blocks and check only for those who are actually limited.
     // Should save a decent chunk of CPU time
-    for( BlockInfo tBI : _mConfig.LimitedBlocks )
+    for( BlockLimit tBL : BlockLimiter.blockLimitsHandler.getBlockLimits() )
     {
-      if( tBI.matches( tBlockDomain ) )
+      if( tBL.matches( tBlockDomain ) )
       {
-        if( BlockLimiter.instance.BWatcher.canBreakBlock( event.getPlayer().getUniqueID(), event.getPlayer().dimension, event.x, event.y, event.z ) )
+        if( BlockLimiter.instance.BWatcher.canBreakBlock( event.getPlayer().getUniqueID(), event.getPlayer().dimension, event.x, event.y, event.z ) ||
+            event.getPlayer().capabilities.isCreativeMode)
         {
           BlockLimiter.instance.BWatcher.removeBlock( event.getPlayer().dimension, event.x, event.y, event.z );
         }
@@ -53,6 +55,7 @@ public class BlockEvents
             PlayerChatHelper.SendError( event.getPlayer(), "This Block is protected and cannot be removed by you" );
           event.setCanceled( true );
         }
+
       }
     }
   }
@@ -68,12 +71,24 @@ public class BlockEvents
 
     BlockLimiter.Logger.debug( "BlockPlaceEvent: " + tBlockDomain.modId + ":" + tBlockDomain.name + " in Dim " + event.player.dimension );
 
-    for( BlockInfo tBI : _mConfig.LimitedBlocks )
+    for( BlockLimit tBL : BlockLimiter.blockLimitsHandler.getBlockLimits() )
     {
-      if( tBI.matches( tBlockDomain ) )
+      if( tBL.matches( tBlockDomain ) )
       {
-        int tMaxForDim = tBI.getMaxAmountForDimension( event.player.dimension );
-        if( tMaxForDim == -1 )
+        // To prevent FP issues, we just ignore them
+        if (event.player instanceof FakePlayer)
+        {
+          if (BlockLimiter.Config.StopFakePlayerPlacing)
+            event.setCanceled( true );
+          return;
+        }
+
+        int tMaxForDim = tBL.getMaxAmountForDimension( event.player.dimension );
+        if( tMaxForDim < 0 )
+        {
+          BlockLimiter.Logger.warn( String.format( "Block %s was supposed to be monitored, but the DimensionLookup failed?!", tBlockDomain.toString() ) );
+        }
+        else if( tMaxForDim == 0 || ( tMaxForDim >= 0 && BlockLimiter.instance.BWatcherDB.isDummy() ) )
         {
           event.setCanceled( true );
 
@@ -83,8 +98,15 @@ public class BlockEvents
             if( BlockLimiter.Config.SFXOnBlockDeny.length() > 0 )
               event.world.playSoundAtEntity( event.player, BlockLimiter.Config.SFXOnBlockDeny, 1F, 1F );
 
-            int tMsgIdx = _mRnd.nextInt( BlockLimiter.Config.RandomDenyMessages.length );
-            PlayerChatHelper.SendNotifyWarning( event.player, BlockLimiter.Config.RandomDenyMessages[tMsgIdx] );
+            String tDenyMessage = tBL.getCustomDenyMessage( event.player.dimension );
+
+            if( tDenyMessage.length() == 0 )
+            {
+              int tMsgIdx = _mRnd.nextInt( BlockLimiter.Config.RandomDenyMessages.length );
+              PlayerChatHelper.SendNotifyWarning( event.player, BlockLimiter.Config.RandomDenyMessages[tMsgIdx] );
+            }
+            else
+              PlayerChatHelper.SendNotifyWarning( event.player, tDenyMessage );
           }
           catch( Exception e )
           {

@@ -21,15 +21,20 @@ public class BlockLimiterConfig extends ConfigManager
     super( pConfigBaseDirectory, pModCollectionDirectory, pModID );
   }
 
-  public List<BlockInfo> LimitedBlocks = null;
+  //public List<BlockInfo> LimitedBlocks = null;
   public List<ItemInfo> LimitedItems = null;
-  private String tConfiguredBlocks[];
+  //private String tConfiguredBlocks[];
   private String tConfiguredItems[];
   public String[] RandomDenyMessages = null;
   public String[] RandomItemDenyMessages = null;
   public String SFXOnBlockDeny;
   public String SFXOnItemDeny;
   public boolean DenyCreativeMode;
+  public String DBHost;
+  public String DBUser;
+  public String DBPass;
+  public String DBName;
+  public boolean StopFakePlayerPlacing;
 
   /**
    * PreInit default values and lists
@@ -37,24 +42,34 @@ public class BlockLimiterConfig extends ConfigManager
   @Override
   protected void PreInit()
   {
-    LimitedBlocks = new ArrayList<BlockInfo>();
+    //LimitedBlocks = new ArrayList<BlockInfo>();
     LimitedItems = new ArrayList<ItemInfo>();
     RandomDenyMessages = new String[] { "You can't place that here", "You are too jelly to place this", "The block doesn't want to be here", "YOU SHALL NOT PLACE (this Block)", "*poof*" };
     RandomItemDenyMessages = new String[] { "You can't use that here", "You are too jelly to use this", "The item seems to be broken...", "YOU SHALL NOT USE (this Item)" };
     SFXOnBlockDeny = "minecraft:ambient.weather.thunder";
     SFXOnItemDeny = "minecraft:ambient.weather.thunder";
     DenyCreativeMode = false;
+    DBHost = "";
+    DBUser = "";
+    DBPass = "";
+    DBName = "";
+    StopFakePlayerPlacing = true;
   }
 
   protected void Init()
   {
-    tConfiguredBlocks = _mainConfig.getStringList( "BlockList", "Main", new String[] {}, "Define your Blocks here. Syntax is: [modID]:[BlockID];[DimID];... if you don't add a Dimension (e.g. minecraft:dirt) it will be denied in every dimension" );
+    //tConfiguredBlocks = _mainConfig.getStringList( "BlockList", "Main", new String[] {}, "Define your Blocks here. Syntax is: [modID]:[BlockID];[DimID];... if you don't add a Dimension (e.g. minecraft:dirt) it will be denied in every dimension" );
     tConfiguredItems = _mainConfig.getStringList( "ItemList", "Main", new String[] {}, "Define your Items here. Syntax is: [modID]:[ItemID];[DimID];... if you don't add a Dimension (e.g. minecraft:dirt instead of minecraft:dirt;12) it will be denied in every dimension" );
     RandomDenyMessages = _mainConfig.getStringList( "RejectMessages", "Main", RandomDenyMessages, "Define a few reject messages that are being sent to the player if they try to place a monitored Block" );
     RandomItemDenyMessages = _mainConfig.getStringList( "ItemRejectMessages", "Main", RandomItemDenyMessages, "Define a few reject messages that are being sent to the player if they try to use a monitored item" );
     SFXOnBlockDeny = _mainConfig.getString( "PlaySFXOnBlockDeny", "main", SFXOnBlockDeny, "Leave it blank for no sound effect, or put in a valid sound-reference like this: [modID]:[soundeffectID]" );
     SFXOnItemDeny = _mainConfig.getString( "PlaySFXOnItemDeny", "main", SFXOnItemDeny, "Leave it blank for no sound effect, or put in a valid sound-reference like this: [modID]:[soundeffectID]" );
     DenyCreativeMode = _mainConfig.getBoolean( "DenyCreativeMode", "main", DenyCreativeMode, "Set this to true to prevent even Server-OPs/Admins from placing forbidden blocks and using forbidden items" );
+    DBHost = _mainConfig.getString( "DBHost", "Database", DBHost, "Database Hostname. Skip this to disable Database connection. However, numbered BlockLimits will not work then" );
+    DBUser = _mainConfig.getString( "DBUser", "Database", DBUser, "Database Username" );
+    DBPass = _mainConfig.getString( "DBPass", "Database", DBPass, "Database Password" );
+    DBName = _mainConfig.getString( "DBName", "Database", DBName, "Database Schema Name" );
+    StopFakePlayerPlacing = _mainConfig.getBoolean( "StopFakePlayerPlacing", "main", StopFakePlayerPlacing, "If true, FakePlayers will always be blocked when trying to place a forbidden/limited block. If false, they will NOT be monitored! Only set this to false if you really need to" );
   }
 
   public boolean Reload()
@@ -62,8 +77,8 @@ public class BlockLimiterConfig extends ConfigManager
     _mainConfig.load(); // Reload file
     Init();
     boolean tState = true;
-    if( !InitDefinedBlocks() )
-      tState = false;
+//    if( !InitDefinedBlocks() )
+//      tState = false;
     if( !InitDefinedItems() )
       tState = false;
 
@@ -112,6 +127,7 @@ public class BlockLimiterConfig extends ConfigManager
    * 
    * @param pBlocks
    */
+  /*
   private boolean InitDefinedBlocks()
   {
     boolean tResult = true;
@@ -143,11 +159,11 @@ public class BlockLimiterConfig extends ConfigManager
     }
     return tResult;
   }
-
+*/
   @Override
   protected void PostInit()
   {
-    InitDefinedBlocks();
+    //InitDefinedBlocks();
     InitDefinedItems();
   }
 
