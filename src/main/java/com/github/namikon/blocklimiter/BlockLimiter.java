@@ -30,7 +30,7 @@ import eu.usrv.yamcore.auxiliary.IngameErrorLog;
 import eu.usrv.yamcore.auxiliary.LogHelper;
 
 
-@Mod( modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, acceptableRemoteVersions = "*", dependencies = "required-after:Forge@[10.13.4.1614,);" + "required-after:YAMCore@[0.5.72-SNAPSHOT,);" )
+@Mod( modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, acceptableRemoteVersions = "*", dependencies = "required-after:Forge@[10.13.4.1614,);" + "required-after:YAMCore@[0.5.72,);" )
 public class BlockLimiter
 {
   public static BlockLimiterConfig Config = null;
