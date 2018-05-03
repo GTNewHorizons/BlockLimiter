@@ -16,6 +16,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'signing'
 
 file "build.properties" withReader {
     def prop = new Properties()
@@ -28,7 +29,7 @@ group= "com.github.namikon"
 archivesBaseName = "BlockLimiter"
 
 minecraft {
-    version = "${config.forge.version}"
+    version = "${config.forge.version}-${config.minecraft.version}"
     runDir = "eclipse"
 
         replaceIn "src/main/java/com/github/namikon/blocklimiter/auxiliary/Reference.java"
@@ -38,7 +39,7 @@ minecraft {
 repositories {
     maven {
         name 'UsrvDE'
-        url "http://jenkins.usrv.de:8082/nexus/content/repositories/releases/"
+        url "http://jenkins.usrv.eu:8081/nexus/content/repositories/releases/"
     }
 }
 
@@ -64,5 +65,20 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+task signJar(dependsOn: 'reobf'){
+    doLast {
+        ant.signjar(
+            destDir: jar.destinationDir,
+            jar: jar.getArchivePath(),
+            alias: findProperty('keyStoreAlias') ?: '',
+            keystore: findProperty('keyStore') ?: '',
+            storepass: findProperty('keyStorePass') ?: '',
+            digestalg: findProperty('signDigestAlg') ?: '',
+            tsaurl: findProperty('signTSAurl') ?: '',
+            verbose: true
+            )
     }
 }
