@@ -1,6 +1,7 @@
 eclipse/
 gradle/
 .gradle/
+build/
 gradlew.bat
 gradlew
 README.txt
