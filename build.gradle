@@ -2,16 +2,20 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            name = "GT"
+            url = "http://gregtech.overminddl1.com/"
         }
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            name = "jitpack"
+            url = "https://jitpack.io"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'com.github.GTNH2:ForgeGradle:FG_1.2-SNAPSHOT'
     }
 }
 
@@ -29,7 +33,7 @@ group= "com.github.namikon"
 archivesBaseName = "BlockLimiter"
 
 minecraft {
-    version = "${config.forge.version}-${config.minecraft.version}"
+    version = "${config.minecraft.version}-${config.forge.version}-${config.minecraft.version}"
     runDir = "eclipse"
 
         replaceIn "src/main/java/com/github/namikon/blocklimiter/auxiliary/Reference.java"
