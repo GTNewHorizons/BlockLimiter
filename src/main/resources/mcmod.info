@@ -1,10 +1,10 @@
 [
 {
-  "modid": "blocklimiter",
-  "name": "BlockLimiter. Restict your Blocks",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "Define which Blocks can be placed or not, depending on the dimension",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
+  "version": "${modVersion}",
+  "mcversion": "${minecraftVersion}",
   "url": "",
   "updateUrl": "",
   "authorList": [
