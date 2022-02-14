@@ -1,18 +1,21 @@
-[
 {
-  "modid": "${modId}",
-  "name": "${modName}",
-  "description": "Define which Blocks can be placed or not, depending on the dimension",
-  "version": "${modVersion}",
-  "mcversion": "${minecraftVersion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": [
-"Namikon"
-],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Define which Blocks can be placed or not, depending on the dimension",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "",
+		"updateUrl": "",
+		"authorList": [
+			"Namikon"
+		],
+		"credits": "",
+		"logoFile": "",
+		"screenshots": [],
+		"requiredMods": ["Forge@[10.13.2.1291,)", "YAMCore@[0.5.65,)"],
+		"dependencies": ["YAMCore@[0.5.65,)"],
+		"useDependencyInformation": true
+	}]
 }
-]
