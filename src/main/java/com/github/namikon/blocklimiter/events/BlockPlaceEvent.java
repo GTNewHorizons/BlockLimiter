@@ -15,45 +15,46 @@ import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
 
 public class BlockPlaceEvent {
-	private BlockLimiterConfig _mConfig = null;
-	private Random _mRnd = null;
 
-	public BlockPlaceEvent(BlockLimiterConfig pCfgMan) {
-		_mConfig = pCfgMan;
-		_mRnd = new Random();
-	}
+    private BlockLimiterConfig _mConfig = null;
+    private Random _mRnd = null;
 
-	@SubscribeEvent(priority=EventPriority.LOWEST)
-	public void onBlockPlace(BlockEvent.PlaceEvent event)
-	{
-		// Ignore players in Creative-Mode
-		if (event.player.capabilities.isCreativeMode && !BlockLimiter.Config.DenyCreativeMode)
-			return;
+    public BlockPlaceEvent(BlockLimiterConfig pCfgMan) {
+        _mConfig = pCfgMan;
+        _mRnd = new Random();
+    }
 
-		UniqueIdentifier tBlockDomain = GameRegistry.findUniqueIdentifierFor(event.block);
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onBlockPlace(BlockEvent.PlaceEvent event) {
+        // Ignore players in Creative-Mode
+        if (event.player.capabilities.isCreativeMode && !BlockLimiter.Config.DenyCreativeMode) return;
 
-		BlockLimiter.Logger.debug("BlockPlaceEvent: " + tBlockDomain.modId + ":" + tBlockDomain.name + " in Dim " + event.player.dimension);
+        UniqueIdentifier tBlockDomain = GameRegistry.findUniqueIdentifierFor(event.block);
 
-		for (BlockInfo tBI : _mConfig.LimitedBlocks)
-		{
-			if (tBI.isDenied(tBlockDomain, event.player.dimension))
-			{
-				event.setCanceled(true);
+        BlockLimiter.Logger.debug(
+                "BlockPlaceEvent: " + tBlockDomain.modId
+                        + ":"
+                        + tBlockDomain.name
+                        + " in Dim "
+                        + event.player.dimension);
 
-				try // just in case someone messes up with the config file...
-				{
-					if (BlockLimiter.Config.SFXOnBlockDeny.length() > 0)
-						event.world.playSoundAtEntity(event.player, BlockLimiter.Config.SFXOnBlockDeny, 1F, 1F);
+        for (BlockInfo tBI : _mConfig.LimitedBlocks) {
+            if (tBI.isDenied(tBlockDomain, event.player.dimension)) {
+                event.setCanceled(true);
 
-					int tMsgIdx = _mRnd.nextInt(BlockLimiter.Config.RandomDenyMessages.length);
-					PlayerChatHelper.SendNotifyWarning(event.player, BlockLimiter.Config.RandomDenyMessages[tMsgIdx]);
-				}
-				catch (Exception e)
-				{
-					BlockLimiter.Logger.error("Prevented ServerCrash caused by malformed RejectMessage or SoundSetting in the config file");
-				}
-				return;
-			}
-		}
-	}
+                try // just in case someone messes up with the config file...
+                {
+                    if (BlockLimiter.Config.SFXOnBlockDeny.length() > 0)
+                        event.world.playSoundAtEntity(event.player, BlockLimiter.Config.SFXOnBlockDeny, 1F, 1F);
+
+                    int tMsgIdx = _mRnd.nextInt(BlockLimiter.Config.RandomDenyMessages.length);
+                    PlayerChatHelper.SendNotifyWarning(event.player, BlockLimiter.Config.RandomDenyMessages[tMsgIdx]);
+                } catch (Exception e) {
+                    BlockLimiter.Logger.error(
+                            "Prevented ServerCrash caused by malformed RejectMessage or SoundSetting in the config file");
+                }
+                return;
+            }
+        }
+    }
 }
