@@ -7,6 +7,7 @@ import java.util.List;
 import com.github.namikon.blocklimiter.BlockLimiter;
 import com.github.namikon.blocklimiter.auxiliary.BlockInfo;
 import com.github.namikon.blocklimiter.auxiliary.ItemInfo;
+
 import eu.usrv.yamcore.config.ConfigManager;
 
 public class BlockLimiterConfig extends ConfigManager {
