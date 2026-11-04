@@ -16,6 +16,7 @@ public class BlockInfo {
     private String _mFQBN;
     private String _mModID;
     private String _mBlockName;
+    private final String _mCheckMessage;
 
     private List<Integer> _mBannedDimensions;
     private boolean _mGlobalDenied = false;
@@ -23,11 +24,12 @@ public class BlockInfo {
     public BlockInfo(String pBlockConfig) {
         _mBannedDimensions = new ArrayList<Integer>();
         InitBlockInfoInstance(pBlockConfig);
+        _mCheckMessage = "Checking against block " + _mModID + ":" + _mBlockName;
     }
 
     public boolean isDenied(UniqueIdentifier pUID, int pDimensionID) {
         boolean tResult = false;
-        BlockLimiter.Logger.debug(String.format("Checking against block %s:%s", _mModID, _mBlockName));
+        BlockLimiter.Logger.debug(_mCheckMessage);
 
         if (pUID.modId.equalsIgnoreCase(_mModID) && pUID.name.equalsIgnoreCase(_mBlockName)) {
             BlockLimiter.Logger.debug("Target Block found, ModID and Name match");
