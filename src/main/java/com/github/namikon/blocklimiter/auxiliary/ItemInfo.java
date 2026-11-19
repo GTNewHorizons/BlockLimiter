@@ -12,6 +12,7 @@ import eu.usrv.yamcore.auxiliary.enums.ItemEqualsCompareMethodEnum;
 public class ItemInfo {
 
     private ItemDescriptor _mItemDescriptor;
+    private final String _mCheckMessage;
 
     private List<Integer> _mBannedDimensions;
     private boolean _mGlobalDenied = false;
@@ -19,11 +20,12 @@ public class ItemInfo {
     public ItemInfo(String pItemConfig) {
         _mBannedDimensions = new ArrayList<Integer>();
         InitBlockInfoInstance(pItemConfig);
+        _mCheckMessage = "Checking against item " + _mItemDescriptor.toString();
     }
 
     public boolean isDenied(ItemDescriptor pID, int pDimensionID) {
         boolean tResult = false;
-        BlockLimiter.Logger.debug(String.format("Checking against item %s", _mItemDescriptor.toString()));
+        BlockLimiter.Logger.debug(_mCheckMessage);
 
         if (_mItemDescriptor.isEqualTo(pID, ItemEqualsCompareMethodEnum.Exact)) {
             BlockLimiter.Logger.debug("Target Item found");
